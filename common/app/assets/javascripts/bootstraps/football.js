@@ -24,7 +24,7 @@ define([
             footballMatch = config.page.footballMatch;
 
         if (footballMatch ||
-            ((config.hasTone("Match reports") || config.page.isLiveBlog) && teams.length === 2)) {
+            ((config.hasTone('Match reports') || config.page.isLiveBlog) && teams.length === 2)) {
             return yes(footballMatch || {
                 date: config.webPublicationDateAsUrlPart(),
                 teams: teams
