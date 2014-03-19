@@ -7,11 +7,13 @@ import scala.collection.JavaConverters._
 import org.joda.time.DateTime
 import java.io.StringWriter
 import org.jsoup.Jsoup
+import com.sun.syndication.feed.module.mediarss.types.{Metadata, UrlReference, MediaContent}
 
 object TrailsToRss {
   def apply(title: Option[String], trails: Seq[Trail])(implicit request: RequestHeader): String = {
 
     import com.sun.syndication.feed.synd._
+    import com.sun.syndication.feed.module.mediarss._
     import com.sun.syndication.io.{FeedException, SyndFeedOutput}
 
     val feedTitle = title.map(t => s"$t | The Guardian").getOrElse("The Guardian")
@@ -59,6 +61,22 @@ object TrailsToRss {
         }
       description.setValue(standfirst + intro)
 
+      var modules = trail.bodyImages.map{ img =>
+        img.largestImage.map { i =>
+          val item = new MediaContent(new UrlReference(i.url.get))
+          val md = new Metadata()
+          item.setMetadata(md)
+          val contents = List(item)
+          val module = new MediaEntryModuleImpl()
+          module.setMediaContents(contents.toArray)
+          module
+        }
+      }.asJava
+
+    //val module: MediaEntryModuleImpl = new MediaEntryModuleImpl()
+
+
+
       // Entry
       val entry = new SyndEntryImpl
       entry.setTitle(trail.headline)
@@ -67,6 +85,7 @@ object TrailsToRss {
       entry.setAuthor(trail.byline.getOrElse(""))
       entry.setPublishedDate(trail.webPublicationDate.toDate)
       entry.setCategories(categories)
+      entry.setModules(modules)
       entry
 
     }.asJava
