@@ -18,7 +18,7 @@ define([
     'facia/modules/ui/live-blog-updates',
     'facia/modules/ui/snaps',
     'facia/modules/ui/sponsorship',
-    'facia/modules/onwards/weather',
+    'facia/modules/onwards/new-weather',
     'lodash/functions/partial',
     'lodash/collections/forEach'
 ], function (
@@ -41,7 +41,7 @@ define([
     liveblogUpdates,
     snaps,
     sponsorship,
-    weather,
+    initialiseWeather,
     partial,
     forEach
 ) {
@@ -78,9 +78,9 @@ define([
             },
 
             showWeather: function () {
-                if (config.switches.weather) {
+                if (config.switches.weather && config.page.contentType === 'Network Front') {
                     mediator.on('page:front:ready', function () {
-                        weather.init();
+                        initialiseWeather();
                     });
                 }
             },
